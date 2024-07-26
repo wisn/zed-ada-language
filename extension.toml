@@ -1,0 +1,11 @@
+id = "ada"
+name = "Ada"
+version = "0.1.0"
+authors = ["wisn <hi@wisn.ch>"]
+description = "Ada language support for Zed. Provide syntax highlighting only for now."
+repository = "https://github.com/wisn/zed-ada-language"
+schema_version = 1
+
+[grammars.ada]
+repository = "https://github.com/wisn/tree-sitter-ada"
+commit = "e8e2515465cc2d7c444498e68bdb9f1d86767f95"
