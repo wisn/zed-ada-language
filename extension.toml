@@ -1,6 +1,6 @@
 id = "ada"
 name = "Ada"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["wisn <hi@wisn.ch>"]
 description = "Ada language support for Zed. Provide syntax highlighting only for now."
 repository = "https://github.com/wisn/zed-ada-language"
