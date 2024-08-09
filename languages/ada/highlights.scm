@@ -1,195 +1,236 @@
-;; highlight queries.
-;; See the syntax at https://tree-sitter.github.io/tree-sitter/using-parsers#pattern-matching-with-queries
-;; See also https://github.com/nvim-treesitter/nvim-treesitter/blob/master/CONTRIBUTING.md#parser-configurations
-;; for a list of recommended @ tags, though not all of them have matching
-;; highlights in neovim.
-
+; keywords (ada 2022 reserved keywords)
 [
-   "abort"
-   "abs"
-   "abstract"
-   "accept"
-   "access"
-   "all"
-   "array"
-   "at"
-   "begin"
-   "declare"
-   "delay"
-   "delta"
-   "digits"
-   "do"
-   "end"
-   "entry"
-   "exit"
-   "generic"
-   "interface"
-   "is"
-   "limited"
-   "null"
-   "of"
-   "others"
-   "out"
-   "pragma"
-   "private"
-   "range"
-   "synchronized"
-   "tagged"
-   "task"
-   "terminate"
-   "until"
-   "when"
+    "abort"
+    "else"
+    "null"
+    "select"
+    "abs"
+    "elsif"
+    "of"
+    "separate"
+    "abstract"
+    "end"
+    "or"
+    "some"
+    "accept"
+    "entry"
+    "others"
+    "subtype"
+    "access"
+    "exception"
+    "out"
+    "synchronized"
+    "aliased"
+    "exit"
+    "overriding"
+    "tagged"
+    "all"
+    "for"
+    "package"
+    "task"
+    "and"
+    "function"
+    "pragma"
+    "terminate"
+    "array"
+    "generic"
+    "private"
+    "then"
+    "at"
+    "goto"
+    "procedure"
+    "type"
+    "begin"
+    "if"
+    "protected"
+    "until"
+    "body"
+    "in"
+    "raise"
+    "use"
+    "case"
+    "interface"
+    "range"
+    "when"
+    "constant"
+    "is"
+    "record"
+    "while"
+    "declare"
+    "limited"
+    "rem"
+    "with"
+    "delay"
+    "loop"
+    "renames"
+    "xor"
+    "delta"
+    "mod"
+    "requeue"
+    "digits"
+    "new"
+    "return"
+    "do"
+    "not"
+    "reverse"
 ] @keyword
-[
-   "aliased"
-   "constant"
-   "renames"
-] @storageclass
-[
-   "mod"
-   "new"
-   "protected"
-   "record"
-   "subtype"
-   "type"
-] @keyword.type
-[
-   "with"
-   "use"
-] @keyword ;; changed from @include since there is no highlight for @include
-[
-   "body"
-   "function"
-   "overriding"
-   "procedure"
-   "package"
-   "separate"
-] @keyword.function
-[
-   "and"
-   "in"
-   "not"
-   "or"
-   "xor"
-] @keyword.operator
-[
-   "while"
-   "loop"
-   "for"
-   "parallel"
-   "reverse"
-   "some"
-] @repeat
-[
-   "return"
-] @keyword.return
-[
-   "case"
-   "if"
-   "else"
-   "then"
-   "elsif"
-   "select"
-] @conditional
-[
-   "exception"
-   "raise"
-] @exception
-(comment) @comment @spell
+
+; comments
+(comment) @comment
+
+; literals
 (string_literal) @string
 (character_literal) @string
 (numeric_literal) @number
+((identifier) @boolean (#any-of? @boolean "True" "False"))
 
-;; Highlight the name of subprograms
-(procedure_specification name: (_) @function)
-(function_specification name: (_) @function)
-(package_declaration name: (_) @function)
-(package_body name: (_) @function)
+; operators
+[
+    (relational_operator)
+    (binary_adding_operator)
+    (unary_adding_operator)
+    (multiplying_operator)
+    (tick)
+] @keyword.operator
+
+; type definition
+(full_type_declaration (identifier) @type.interface)
+(access_to_object_definition (identifier) @type)
+(subtype_declaration (identifier) @type)
+
+; enums
+(enumeration_type_definition (identifier) @enum)
+(discrete_choice (expression (term (identifier) @enum)))
+(discrete_choice (identifier) @type (_))
+
+; arrays
+(array_type_definition (component_definition (identifier) @type))
+(array_type_definition (index_subtype_definition (identifier) @type))
+(object_declaration (identifier) @variable (identifier) @type (index_constraint (identifier) @type))
+(slice (identifier) @type)
+(range_g (identifier) @type)
+
+; generics
+(formal_object_declaration (identifier)+ (identifier) @type)
+(formal_object_declaration ((_) . (identifier)) @variable)
+(formal_complete_type_declaration (identifier) @type)
+(formal_incomplete_type_declaration (identifier) @type)
+(formal_package_declaration (identifier) @title)
+(formal_derived_type_definition (identifier) @type)
+
+; pragmas
+(pragma_g (identifier) @emphasis)
+(pragma_argument_association (expression (term (identifier) @type)))
+
+; subprograms
+(parameter_specification (identifier)+ (identifier) @type)
+(parameter_specification ((_) . (identifier)) @variable.parameter)
+(parameter_specification (access_definition (identifier) @type))
+(aspect_association ((identifier) @type.super))
 (generic_instantiation name: (_) @function)
 (entry_declaration . (identifier) @function)
+(result_profile (identifier) @type.super)
+(result_profile (access_definition (identifier) @type.super))
+(subprogram_body (_)* (identifier) @function)
+(subprogram_body (_)* (string_literal) @function)
+(subprogram_renaming_declaration (_)* (identifier) @type.super)
+(relation_membership (membership_choice_list (term (identifier) @type)))
+(parameter_association (expression (term (selected_component (identifier) @type))))
 
-;; Some keywords should take different categories depending on the context
-(use_clause "use"  @include "type" @include)
-(with_clause "private" @include)
-(with_clause "limited" @include)
-(use_clause (_) @namespace)
-(with_clause (_) @namespace)
+; functions
+(function_specification name: (_) @function)
+(function_call name: (_) @function)
 
-(loop_statement "end" @keyword.repeat)
-(if_statement "end" @conditional)
-(loop_parameter_specification "in" @keyword.repeat)
-(loop_parameter_specification "in" @keyword.repeat)
-(iterator_specification ["in" "of"] @keyword.repeat)
-(range_attribute_designator "range" @keyword.repeat)
+; procedures
+(procedure_specification name: (_) @function)
+(procedure_call_statement name: (_) @function)
 
-(raise_statement "with" @exception)
+; packages
+(package_declaration name: (_) @title)
+(package_declaration (_)* (identifier) @title)
+(package_body name: (_) @title)
+(package_body (_)* (identifier) @title)
+(package_body (_)* (selected_component (identifier) @title))
+(subunit (identifier) @title)
+(private_type_declaration (identifier) @type)
+(private_extension_declaration (identifier) @type)
+(incomplete_type_declaration (identifier) @type)
+(discriminant_specification (_)* (identifier) @type)
+(discriminant_specification ((_) . (identifier)) @variable)
+(package_body_stub (identifier) @title)
+(protected_body_stub (identifier) @type)
+(task_body_stub (identifier) @type)
 
-(gnatprep_declarative_if_statement)  @preproc
-(gnatprep_if_statement)              @preproc
-(gnatprep_identifier)                @preproc
+; assignments
+(assignment_statement . (identifier) @variable)
+(allocator subtype_mark: (identifier) @type)
+(allocator (qualified_expression subtype_name: (identifier) @type))
+(allocator (selected_component prefix: (identifier) @type))
+(object_declaration (identifier)+ (identifier) @type)
+(object_declaration ((_) . (identifier)) @variable)
 
-(subprogram_declaration "is" @keyword.function "abstract"  @keyword.function)
-(aspect_specification "with" @keyword.function)
+; attributes
+(attribute_designator (identifier) @property)
+((range_attribute_designator (_)*) @property)
+((range_attribute_designator ("(" . (_) . ")" @primary) @primary))
+(reduction_attribute_designator (identifier) @property)
 
-(full_type_declaration "is" @keyword.type)
-(subtype_declaration "is" @keyword.type)
-(record_definition "end" @keyword.type)
-(full_type_declaration (_ "access" @keyword.type))
-(array_type_definition "array" @keyword.type "of" @keyword.type)
-(access_to_object_definition "access" @keyword.type)
-(access_to_object_definition "access" @keyword.type
-   [
-      (general_access_modifier "constant" @keyword.type)
-      (general_access_modifier "all" @keyword.type)
-   ]
-)
-(range_constraint "range" @keyword.type)
-(signed_integer_type_definition "range" @keyword.type)
-(index_subtype_definition "range" @keyword.type)
-(record_type_definition "abstract" @keyword.type)
-(record_type_definition "tagged" @keyword.type)
-(record_type_definition "limited" @keyword.type)
-(record_type_definition (record_definition "null" @keyword.type))
-(private_type_declaration "is" @keyword.type "private" @keyword.type)
-(private_type_declaration "tagged" @keyword.type)
-(private_type_declaration "limited" @keyword.type)
-(task_type_declaration "task" @keyword.type "is" @keyword.type)
+; imports
+(with_clause (_) @label)
+(use_clause (_) @label)
 
-;; Gray the body of expression functions
-(expression_function_declaration
-   (function_specification)
-   "is"
-   (_) @attribute
-)
-(subprogram_declaration (aspect_specification) @attribute)
+; exceptions
+(raise_expression (identifier) @type)
 
-;; Highlight full subprogram specifications
-;(subprogram_body
-;    [
-;       (procedure_specification)
-;       (function_specification)
-;    ] @function.spec
-;)
+; preprocessor
+(gnatprep_declarative_if_statement) @preproc
+(gnatprep_if_statement) @preproc
+(gnatprep_identifier) @preproc
 
-((comment) @comment.documentation
-  . [
-      (entry_declaration)
-      (subprogram_declaration)
-      (parameter_specification)
-    ])
+; protected objects
+(single_protected_declaration (identifier) @type)
+(protected_definition (_)* (identifier) @type)
+(protected_definition (entry_declaration (_) (identifier) @type))
+(protected_definition (component_declaration (identifier) @variable))
+(protected_definition (component_declaration (component_definition (identifier) @type)))
+(protected_body (identifier) @type)
+(abort_statement (identifier) @type)
+(protected_body (entry_body (identifier) @function))
+(requeue_statement (identifier) @type)
+(entry_index_specification (identifier)+ (identifier) @type)
 
-(compilation_unit
-  . (comment) @comment.documentation)
+; records
+(component_list (component_declaration (identifier) @variable))
+(component_list (component_declaration (component_definition (_) @type)))
+(interface_type_definition (identifier) @type)
+(derived_type_definition (identifier) @type)
 
-(component_list
-  (component_declaration)
-    . (comment) @comment.documentation)
+; renames
+(object_renaming_declaration (identifier) @type)
+(exception_renaming_declaration (identifier) @type)
+(package_renaming_declaration (identifier) @title)
+(package_renaming_declaration (selected_component (identifier) @label))
+(generic_renaming_declaration (identifier) @type)
 
-(enumeration_type_definition
-  (identifier)
-  . (comment) @comment.documentation)
+; statements
+(target_name) @emphasis.strong
+(iterator_specification (_) (identifier) @type)
+(extended_return_object_declaration (identifier) @variable)
+(extended_return_object_declaration (identifier) (identifier) @type)
+(loop_label (identifier) @constant)
+(exit_statement (identifier) @constant)
+(loop_statement (_)* (identifier) @constant)
+(goto_statement (identifier) @constant)
+(label (identifier) @constant)
+(loop_parameter_specification (range_g (selected_component (identifier) @type)))
 
-;; Highlight errors in red. This is not very useful in practice, as text will
-;; be highlighted as user types, and the error could be elsewhere in the code.
-;; This also requires defining    :hi @error guifg=Red    for instance.
-(ERROR) @error
+; exceptions
+(exception_handler (exception_choice_list (exception_choice (identifier) @type)))
+(raise_statement (identifier) @type)
+
+; takss
+(single_task_declaration (identifier) @variant)
+(task_definition (_)* (identifier) @variant)
+(task_body (_)* (identifier) @variant)
+(accept_statement (identifier) @variant)
+(task_type_declaration (identifier) @variant)
