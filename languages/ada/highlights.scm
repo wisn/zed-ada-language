@@ -181,6 +181,7 @@
 
 ; exceptions
 (raise_expression (identifier) @type)
+(exception_declaration . (identifier) @type)
 
 ; preprocessor
 (gnatprep_declarative_if_statement) @preproc
