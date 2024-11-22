@@ -82,7 +82,8 @@
 (string_literal) @string
 (character_literal) @string
 (numeric_literal) @number
-((identifier) @boolean (#any-of? @boolean "True" "False"))
+((identifier) @boolean (#match? @boolean "^[Tt][Rr][Uu][Ee]$"))
+((identifier) @boolean (#match? @boolean "^[Ff][Aa][Ll][Ss][Ee]$"))
 
 ; operators
 [

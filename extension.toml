@@ -1,15 +1,15 @@
 id = "ada"
 name = "Ada"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["wisn <hi@wisn.ch>"]
 description = "Ada language support for Zed."
 repository = "https://github.com/wisn/zed-ada-language"
 schema_version = 1
 
+[grammars.ada]
+repository = "https://github.com/briot/tree-sitter-ada"
+commit = "e8e2515465cc2d7c444498e68bdb9f1d86767f95"
+
 [language_servers.als]
 name = "Ada Language Server"
 language = "Ada"
-
-[grammars.ada]
-repository = "https://github.com/wisn/tree-sitter-ada"
-commit = "e8e2515465cc2d7c444498e68bdb9f1d86767f95"

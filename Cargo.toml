@@ -1,6 +1,6 @@
 [package]
-name = "zed_ada"
-version = "0.1.0"
+name = "ada"
+version = "0.3.0"
 edition = "2021"
 publish = false
 license = "MIT"
@@ -10,4 +10,4 @@ path = "src/ada.rs"
 crate-type = ["cdylib"]
 
 [dependencies]
-zed_extension_api = "0.0.6"
+zed_extension_api = "0.2.0"
