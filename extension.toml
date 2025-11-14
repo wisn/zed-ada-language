@@ -10,6 +10,14 @@ schema_version = 1
 repository = "https://github.com/briot/tree-sitter-ada"
 commit = "e8e2515465cc2d7c444498e68bdb9f1d86767f95"
 
+[grammars.gpr]
+repository = "https://github.com/brownts/tree-sitter-gpr"
+commit = "cea857d3c18d1385d1f5b66cd09ea1e44173945c"
+
 [language_servers.als]
 name = "Ada Language Server"
 language = "Ada"
+
+[language_servers.als_gpr]
+name = "Ada Language Server (GPR)"
+languages = ["GPR"]

@@ -1,0 +1,9 @@
+name = "GPR"
+grammar = "gpr"
+path_suffixes = ["gpr"]
+line_comments = ["-- "]
+tab_size = 3
+brackets = [
+    { start = "(", end = ")", close = true, newline = true },
+    { start = "\"", end = "\"", close = true, newline = false, not_in = ["string"] },
+]
