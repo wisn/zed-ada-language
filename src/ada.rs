@@ -8,8 +8,8 @@ struct AdaExtension {
 #[derive(Clone)]
 struct AlsBinary {
     path: String,
-    args: Option<Vec<String>>,
-    environment: Option<Vec<(String, String)>>,
+    args: Vec<String>,
+    environment: Vec<(String, String)>,
 }
 
 impl AdaExtension {
@@ -18,23 +18,32 @@ impl AdaExtension {
         language_server_id: &LanguageServerId,
         worktree: &zed::Worktree,
     ) -> Result<AlsBinary> {
-        let mut args: Option<Vec<String>> = None;
+        let mut args = Vec::new();
+        if language_server_id.as_ref() == "als_gpr" {
+            args.push("--language-gpr".to_owned());
+        }
+
         let (platform, arch) = zed::current_platform();
         let environment = match platform {
-            zed::Os::Mac | zed::Os::Linux => Some(worktree.shell_env()),
-            zed::Os::Windows => None,
+            zed::Os::Mac | zed::Os::Linux => worktree.shell_env(),
+            zed::Os::Windows => Vec::new(),
         };
 
-        if let Ok(lsp_settings) = LspSettings::for_worktree("als", worktree) {
-            if let Some(binary) = lsp_settings.binary {
-                args = binary.arguments;
-                if let Some(path) = binary.path {
-                    return Ok(AlsBinary {
-                        path: path.clone(),
-                        args,
-                        environment,
-                    });
-                }
+        if let Ok(LspSettings {
+            binary: Some(binary),
+            ..
+        }) = LspSettings::for_worktree("als", worktree)
+        {
+            if let Some(arg_settings) = binary.arguments {
+                args.extend(arg_settings);
+            }
+
+            if let Some(path) = binary.path {
+                return Ok(AlsBinary {
+                    path: path.clone(),
+                    args,
+                    environment,
+                });
             }
         }
 
@@ -143,8 +152,8 @@ impl zed::Extension for AdaExtension {
         let als_binary = self.language_server_binary(language_server_id, worktree)?;
         Ok(zed::Command {
             command: als_binary.path,
-            args: als_binary.args.unwrap_or_default(),
-            env: als_binary.environment.unwrap_or_default(),
+            args: als_binary.args,
+            env: als_binary.environment,
         })
     }
 
