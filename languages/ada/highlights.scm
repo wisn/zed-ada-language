@@ -148,10 +148,9 @@
 
 ; packages
 (package_declaration name: (_) @title)
-(package_declaration (_)* (identifier) @title)
+(package_declaration endname: (_) @title)
 (package_body name: (_) @title)
-(package_body (_)* (identifier) @title)
-(package_body (_)* (selected_component (identifier) @title))
+(package_body endname: (_) @title)
 (subunit (identifier) @title)
 (private_type_declaration (identifier) @type)
 (private_extension_declaration (identifier) @type)
