@@ -140,11 +140,11 @@
 
 ; functions
 (function_specification name: (_) @function)
-(function_call name: (_) @function)
+(function_call name: (_) @function @function.call)
 
 ; procedures
 (procedure_specification name: (_) @function)
-(procedure_call_statement name: (_) @function)
+(procedure_call_statement name: (_) @function @function.call)
 
 ; packages
 (package_declaration name: (_) @title)
